@@ -31,7 +31,8 @@ def shipList(request, sear = "", items = allItems):
     else:
         selItems = items
     return render(request, 'shipList.html', {'data': {
-        'shipList': selItems
+        'shipList': selItems,
+        'src': sear
     }})
 
 def search(request):

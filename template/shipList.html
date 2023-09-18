@@ -12,7 +12,7 @@
 
     <form action="search" method="get" enctype="multipart/form-data">
     {% csrf_token %}
-    <input name="text" type="text" class="form-control" placeholder="" class="text">
+    <input name="text" type="text" class="form-control" placeholder="" class="text" value={{data.src}}>
     <input type="submit" value="Поиск" class="btn btn-primary">
     </form>
     <br>
