@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+    <title>Sea battles of Pacific ocean</title>
+
+
+</head>
+<body class = 'ships'>
+
+    <form action="search" method="get" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input name="text" type="text" class="form-control" placeholder="" class="text">
+    <input type="submit" value="Поиск" class="btn btn-primary">
+    </form>
+    <br>
+    {% for i in data.shipList %}
+        <div class = "card text-center" id = "{{ i.name }}">
+            <img src = "{{ i.src }}" alt = "{{ i.name }}" class="shipsimg">
+            <h2 class="shipsh2">{{ i.name }}</h2>
+            <a class="shipsa" href="http://127.0.0.1:8000/seabattles/{{ i.id }}">Перейти на страницу описания корабля</a>
+        </div>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+    <title>Ship</title>
+</head>
+<body class = 'ship'>
+<h class="name">{{ data.name }}</h>
+<br>
+<img src = '{{ data.src }}' width = 70%>
+<table>
+    {% for i in data.params %}
+    <tr>
+        <td>{{ i.displacement }}</td>
+        <td>{{ i.speed }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
