@@ -20,7 +20,6 @@ from bmstu_lab import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('seabattles/', views.shipList),
-    path('seabattles/search', views.search, name='search'),
+    path('seabattles/', views.search),
     path('seabattles/<int:id>/', views.getShip),
 ]

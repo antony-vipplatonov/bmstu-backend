@@ -36,6 +36,10 @@ def shipList(request, sear = "", items = allItems):
     }})
 
 def search(request):
+    '''if request != "http://127.0.0.1:8000/seabattles/":
+        searchQuery = request.GET['text']
+    else:
+        searchQuery = '''
     searchQuery = request.GET['text']
     return shipList(request, searchQuery)
 
