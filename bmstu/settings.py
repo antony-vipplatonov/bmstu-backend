@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import psycopg2
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -77,13 +78,12 @@ WSGI_APPLICATION = 'bmstu.wsgi.application'
 '''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'studentdb',
+        'NAME': 'seabattles',
         'USER': 'student',
-        'PASSWORD': '123',
+        'PASSWORD': 'pass',
         'HOST': 'localhost',
         'PORT': 5432,
-        'OPTIONS': {'charset': 'utf8'},
-        'TEST_CHARSET': 'utf8',
+        'TEST_CHARSET': 'UTF8',
     }
 }'''
 

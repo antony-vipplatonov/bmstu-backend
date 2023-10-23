@@ -1,0 +1,44 @@
+table {
+	border-collapse: collapse;
+	border: 2px solid black;
+}
+td{
+	border: 2px solid black;
+	text-align: center;
+}
+body.ship{
+	min-height:40rem; 
+	background: linear-gradient(to bottom right, lightgreen, blue);
+}
+tr {
+	background: #fff;
+}
+body.ships{
+	min-height:70rem; 
+	background: linear-gradient(to bottom right, lightblue, blue);
+}
+input.text{
+	width:18rem; 
+	display:inline-block;
+}
+div{
+	width:28rem; 
+	margin-right: 3px; 
+	display:inline-block;
+}
+img.shipsimg{
+	margin-top: 4px; 
+	object-fit: cover; 
+	height: 15rem; 
+	width:90%;
+}
+h2.shipsh2{
+	height: 3rem; 
+	color: #ffd700;
+}
+h.name{
+	font-size: larger;
+}
+a.shipsa{
+	color: #ffd700;
+}

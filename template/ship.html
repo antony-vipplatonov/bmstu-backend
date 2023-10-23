@@ -10,10 +10,15 @@
 <h class="name">{{ data.name }}</h>
 <br>
 <img src = '{{ data.src }}' width = 70%>
+<p>{{data.desc}}</p>
 <table>
     {% for i in data.params %}
     <tr>
+        <td>{{ i.year }}</td>
         <td>{{ i.displacement }}</td>
+    </tr>
+    <tr>
+        <td>{{ i.length }}</td>
         <td>{{ i.speed }}</td>
     </tr>
     {% endfor %}

@@ -9,17 +9,17 @@ from django.conf.urls.static import static
 allItems = [
             {'name': "Авианосец Дзуйкаку",
              'src': '/static/zuikaku.jpg', 'id': 1,
-             'desc': 'Спущен на воду в 1939',
-             'params': [{'displacement': 'Водоизмещение 30 000 т', 'speed': 'Скорость хода 34 узла'}],
+             'desc': 'Зенитное вооружение корабля: 16 x 127-мм, бронирование: до 21,5 см',
+             'params': [{'year': 'Год ввода в строй - 1941', 'displacement': 'Водоизмещение 30 000 т', 'length': 'Длина корпуса - 237 м', 'speed': 'Скорость хода 34 узла'}],
             },
             {'name': "Линкор Пенсильвания",
              'src': '/static/Pensilvania.jpg', 'id': 2,
-             'desc': 'Спущен на воду в 1915',
-             'params': [{'displacement': 'Водоизмещение 31 400 т', 'speed': 'Скорость хода 21 узла'}]},
+             'desc': 'Вооружение корабля:  	4 × 3 — 356-мм и 22 × 1 — 127-мм, бронирование: 343 мм',
+             'params': [{'year': 'Год ввода в строй - 1916', 'displacement': 'Водоизмещение 31 400 т', 'length': 'Длина корпуса - 185,4 м', 'speed': 'Скорость хода 21 узла'}]},
             {'name': "Тяжёлый крейсер Нати",
              'src': '/static/Nachi.jpg', 'id': 3,
-             'desc': 'Спущен на воду в 1927',
-             'params': [{'displacement': 'Водоизмещение 15 933 т', 'speed': 'Скорость хода 35,5 узла'}]},
+             'desc': 'Вооружение корабля: 5 × 2 — 200-мм, бронирование: 102 мм',
+             'params': [{'year': 'Год ввода в строй - 1928', 'displacement': 'Водоизмещение 15 933 т', 'length': 'Длина корпуса - 203,76 м', 'speed': 'Скорость хода 35,5 узла'}]},
         ]
 
 def shipList(request, sear = "", items = allItems):
@@ -36,11 +36,10 @@ def shipList(request, sear = "", items = allItems):
     }})
 
 def search(request):
-    '''if request != "http://127.0.0.1:8000/seabattles/":
+    try:
         searchQuery = request.GET['text']
-    else:
-        searchQuery = '''
-    searchQuery = request.GET['text']
+    except:
+        searchQuery = ''
     return shipList(request, searchQuery)
 
 def getShip(request, id, items = allItems):
