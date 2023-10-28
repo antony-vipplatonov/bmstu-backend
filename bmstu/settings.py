@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bmstu_lab.apps.BmstuLabConfig',
 ]
 
 MIDDLEWARE = [
@@ -75,7 +76,7 @@ WSGI_APPLICATION = 'bmstu.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-'''DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'seabattles',
@@ -85,7 +86,7 @@ WSGI_APPLICATION = 'bmstu.wsgi.application'
         'PORT': 5432,
         'TEST_CHARSET': 'UTF8',
     }
-}'''
+}
 
 
 # Password validation

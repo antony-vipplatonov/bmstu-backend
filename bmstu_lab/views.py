@@ -4,8 +4,12 @@ from datetime import date
 
 from django.shortcuts import render
 from django.conf.urls.static import static
+import psycopg2 as ps
+from .models import Ship
+conn = ps.connect(dbname="seabattles", host="localhost", user="student", password="pass", port="5432")
+cursor = conn.cursor()
 
-
+'''
 allItems = [
             {'name': "Авианосец Дзуйкаку",
              'src': '/static/zuikaku.jpg', 'id': 1,
@@ -21,26 +25,31 @@ allItems = [
              'desc': 'Вооружение корабля: 5 × 2 — 200-мм, бронирование: 102 мм',
              'params': [{'year': 'Год ввода в строй - 1928', 'displacement': 'Водоизмещение 15 933 т', 'length': 'Длина корпуса - 203,76 м', 'speed': 'Скорость хода 35,5 узла'}]},
         ]
+'''
 
-def shipList(request, sear = "", items = allItems):
-    selItems = []
-    if sear != "":
-        for i in items:
-            if sear in i['name']:
-                selItems.append(i)
-    else:
-        selItems = items
+def shipList(request, sear = ""):
     return render(request, 'shipList.html', {'data': {
-        'shipList': selItems,
-        'src': sear
+        'shipList': Ship.objects.filter(status = "действует").filter(name__icontains=sear).order_by('year'),
+        'src' : sear
     }})
 
 def search(request):
-    try:
+    '''try:
         searchQuery = request.GET['text']
     except:
         searchQuery = ''
+    return shipList(request, searchQuery)'''
+    delId = request.POST.get("del", -1)
+    searchQuery = ''
+    if delId == -1:
+        searchQuery = request.GET.get('text', "")
+    else:
+        cursor.execute(f"update public.\"Ship\" set status = 'удалён'  where \"id\" = {delId}")
+        conn.commit()
+
     return shipList(request, searchQuery)
 
-def getShip(request, id, items = allItems):
-    return render(request, 'ship.html', {'data':items[id-1]})
+def getShip(request, id):
+    return render(request, 'ship.html', {'data':Ship.objects.filter(id = id)[0]})
+
+

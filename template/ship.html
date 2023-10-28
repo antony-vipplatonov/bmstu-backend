@@ -9,19 +9,17 @@
 <body class = 'ship'>
 <h class="name">{{ data.name }}</h>
 <br>
-<img src = '{{ data.src }}' width = 70%>
-<p>{{data.desc}}</p>
+<img src = '{{ data.image }}' width = 70%>
+<p>Вооружение корабля: {{data.weapon}}, бронирование: {{data.armoring}}</p>
 <table>
-    {% for i in data.params %}
     <tr>
-        <td>{{ i.year }}</td>
-        <td>{{ i.displacement }}</td>
+        <td>Год ввода в строй - {{ data.year }}</td>
+        <td>Водоизмещение {{ data.displacement }} т</td>
     </tr>
     <tr>
-        <td>{{ i.length }}</td>
-        <td>{{ i.speed }}</td>
+        <td>Длина корпуса - {{ data.length }} м</td>
+        <td>Скорость хода {{ data.speed }} узла</td>
     </tr>
-    {% endfor %}
 </table>
 </body>
 </html>
