@@ -1,55 +1,59 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from datetime import date
+from decimal import Decimal
+import psycopg2
+from bmstu_lab.models import *
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from rest_framework import status
+from bmstu_lab.serializers import *
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+from minio import Minio
+import logging
+from django.conf import settings
+from urllib.request import urlopen
+from django.views.decorators.csrf import csrf_exempt
+import datetime
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+import os
 
-from django.shortcuts import render
-from django.conf.urls.static import static
+fmt = getattr(settings, 'LOG_FORMAT', None)
+lvl = getattr(settings, 'LOG_LEVEL', logging.DEBUG)
+
+logging.basicConfig(format=fmt, level=lvl)
+logging.debug("Logging started on %s for %s" % (logging.root.name, logging.getLevelName(lvl)))
+
+client = Minio(endpoint="localhost:9000",   # адрес сервера
+               access_key='minioadmin',          # логин админа
+               secret_key='minioadmin',       # пароль админа
+               secure=False)                # опциональный параметр, отвечающий за вкл/выкл защищенное TLS соединение
+
 import psycopg2 as ps
 from .models import Ship
 conn = ps.connect(dbname="seabattles", host="localhost", user="student", password="pass", port="5432")
 cursor = conn.cursor()
 
-'''
-allItems = [
-            {'name': "Авианосец Дзуйкаку",
-             'src': '/static/zuikaku.jpg', 'id': 1,
-             'desc': 'Зенитное вооружение корабля: 16 x 127-мм, бронирование: до 21,5 см',
-             'params': [{'year': 'Год ввода в строй - 1941', 'displacement': 'Водоизмещение 30 000 т', 'length': 'Длина корпуса - 237 м', 'speed': 'Скорость хода 34 узла'}],
-            },
-            {'name': "Линкор Пенсильвания",
-             'src': '/static/Pensilvania.jpg', 'id': 2,
-             'desc': 'Вооружение корабля:  	4 × 3 — 356-мм и 22 × 1 — 127-мм, бронирование: 343 мм',
-             'params': [{'year': 'Год ввода в строй - 1916', 'displacement': 'Водоизмещение 31 400 т', 'length': 'Длина корпуса - 185,4 м', 'speed': 'Скорость хода 21 узла'}]},
-            {'name': "Тяжёлый крейсер Нати",
-             'src': '/static/Nachi.jpg', 'id': 3,
-             'desc': 'Вооружение корабля: 5 × 2 — 200-мм, бронирование: 102 мм',
-             'params': [{'year': 'Год ввода в строй - 1928', 'displacement': 'Водоизмещение 15 933 т', 'length': 'Длина корпуса - 203,76 м', 'speed': 'Скорость хода 35,5 узла'}]},
-        ]
-'''
+def get_creator():
+    return 1
+def get_admin():
+    return 2
 
-def shipList(request, sear = ""):
-    return render(request, 'shipList.html', {'data': {
-        'shipList': Ship.objects.filter(status = "действует").filter(name__icontains=sear).order_by('year'),
-        'src' : sear
-    }})
+class ShipList(APIView):
+    model_class = Ship
+    serializer_class = ShipSerializer
 
-def search(request):
-    '''try:
-        searchQuery = request.GET['text']
-    except:
-        searchQuery = ''
-    return shipList(request, searchQuery)'''
-    delId = request.POST.get("del", -1)
-    searchQuery = ''
-    if delId == -1:
-        searchQuery = request.GET.get('text', "")
-    else:
-        cursor.execute(f"update public.\"Ship\" set status = 'удалён'  where \"id\" = {delId}")
-        conn.commit()
-
-    return shipList(request, searchQuery)
-
-def getShip(request, id):
-    return render(request, 'ship.html', {'data':Ship.objects.filter(id = id)[0]})
-
-
+    def get(self, request, format=None):
+        try:
+            Appl = get_object_or_404(Compaund, creator=get_creator(), status="черновик").id
+        except:
+            Appl = None
+        sear = request.GET.get('text', "")
+        NOList = self.model_class.objects.filter(status = "действует").filter(name__icontains=sear).order_by('name')
+        serializer = self.serializer_class(NOList, many=True)
+        return Response({"ships":serializer.data, "draftID": Appl})
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -3,17 +3,18 @@ from django.db import models
 
 class Compaund(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=200)
-    admiralname = models.CharField(max_length=50)
+    name = models.CharField(max_length=200, blank=True, null=True)
+    admiralname = models.CharField(max_length=50, blank=True, null=True)
     country = models.CharField(max_length=50, blank=True, null=True)
     victory = models.IntegerField()
     status = models.CharField(max_length=1)
     creatorname = models.ForeignKey('Users', models.DO_NOTHING, db_column='creatorname')
     moderatorname = models.ForeignKey('Users', models.DO_NOTHING, db_column='moderatorname', related_name='compaund_moderatorname_set')
     datacreate = models.DateTimeField()
-    dataform = models.DateTimeField()
-    dataend = models.DateTimeField()
-    battledate = models.DateField()
+    dataform = models.DateTimeField(blank=True, null=True)
+    dataend = models.DateTimeField(blank=True, null=True)
+    battledate = models.DateField(blank=True, null=True)
+
 
     class Meta:
         managed = False
@@ -41,7 +42,8 @@ class Ship(models.Model):
     displacement = models.FloatField()
     length = models.FloatField()
     speed = models.FloatField()
-    status = models.CharField(max_length=15)
+    status = models.CharField(max_length=15, default="действует")
+    image_src = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -163,6 +165,7 @@ class DjangoMigrations(models.Model):
     class Meta:
         managed = False
         db_table = 'django_migrations'
+
 
 class DjangoSession(models.Model):
     session_key = models.CharField(primary_key=True, max_length=40)

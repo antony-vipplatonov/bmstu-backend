@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-^$rzj864zmc&qschw4yrqw&h%vxzeo!t*vlee#s+ncf)-@93u&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bmstu_lab.apps.BmstuLabConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

@@ -20,6 +20,15 @@ from bmstu_lab import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('seabattles/', views.search),
-    path('seabattles/<int:id>/', views.getShip),
+    path('seabattles/', views.ShipList.as_view()),
+
 ]
+'''path('seabattles/<int:id>/', views.NameOptionDetail.as_view()),
+    path('seabattles/<int:id>/addToAppl/', views.addToAppl),
+    path('seabattles/<int:id>/delFromAppl/', views.delFromAppl),
+    path('applications/', views.VotingResList.as_view()),
+    path('applications/<int:id>/', views.VotingResDetail.as_view()),
+    path('applications/form/', views.formAppl),
+    path('applications/delete/', views.delAppl),
+    path('applications/<int:id>/chstatus/', views.chstatusAppl),
+    path('applications/<int:idAppl>/<int:idServ>/', views.chMM),'''
