@@ -2,14 +2,14 @@ from django.db import models
 
 
 class Compaund(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200, blank=True, null=True)
     admiralname = models.CharField(max_length=50, blank=True, null=True)
     country = models.CharField(max_length=50, blank=True, null=True)
     victory = models.IntegerField()
-    status = models.CharField(max_length=1)
+    status = models.CharField()
     creatorname = models.ForeignKey('Users', models.DO_NOTHING, db_column='creatorname')
-    moderatorname = models.ForeignKey('Users', models.DO_NOTHING, db_column='moderatorname', related_name='compaund_moderatorname_set')
+    moderatorname = models.ForeignKey('Users', models.DO_NOTHING, db_column='moderatorname', related_name='compaund_moderatorname_set', null=True)
     datacreate = models.DateTimeField()
     dataform = models.DateTimeField(blank=True, null=True)
     dataend = models.DateTimeField(blank=True, null=True)
@@ -56,7 +56,7 @@ class Users(models.Model):
     password = models.CharField(max_length=20, blank=True, null=True)
     email = models.CharField(max_length=50, blank=True, null=True)
     phone = models.CharField(max_length=13, blank=True, null=True)
-    ismoderator = models.BooleanField(blank=True, null=True)
+    ismoderator = models.BooleanField(null=True)
 
     class Meta:
         managed = False
