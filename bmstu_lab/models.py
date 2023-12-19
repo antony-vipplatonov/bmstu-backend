@@ -1,16 +1,27 @@
 from django.db import models
 
+class Users(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+    password = models.CharField(max_length=20, blank=True, null=True)
+    email = models.CharField(max_length=50, blank=True, null=True)
+    phone = models.CharField(max_length=13, blank=True, null=True)
+    ismoderator = models.BooleanField(null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Users'
 
 class Compaund(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200, blank=True, null=True)
     admiralname = models.CharField(max_length=50, blank=True, null=True)
     country = models.CharField(max_length=50, blank=True, null=True)
-    victory = models.IntegerField()
-    status = models.CharField()
-    creatorname = models.ForeignKey('Users', models.DO_NOTHING, db_column='creatorname')
-    moderatorname = models.ForeignKey('Users', models.DO_NOTHING, db_column='moderatorname', related_name='compaund_moderatorname_set', null=True)
-    datacreate = models.DateTimeField()
+    victory = models.IntegerField(default=0)
+    status = models.CharField(default="черновик")
+    creatorname = models.ForeignKey(Users, models.DO_NOTHING, db_column='creatorname')
+    moderatorname = models.ForeignKey(Users, models.DO_NOTHING, db_column='moderatorname', related_name='compaund_moderatorname_set', null=True)
+    datacreate = models.DateTimeField(auto_now=True)
     dataform = models.DateTimeField(blank=True, null=True)
     dataend = models.DateTimeField(blank=True, null=True)
     battledate = models.DateField(blank=True, null=True)
@@ -19,19 +30,6 @@ class Compaund(models.Model):
     class Meta:
         managed = False
         db_table = 'Compaund'
-
-
-class CompaundShips(models.Model):
-    id = models.IntegerField(primary_key=True)
-    idship = models.ForeignKey('Ship', models.DO_NOTHING, db_column='idship', blank=True, null=True)
-    idcompaund = models.ForeignKey(Compaund, models.DO_NOTHING, db_column='idcompaund', blank=True, null=True)
-    captain = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Compaund ships'
-        unique_together = (('idship', 'idcompaund'),)
-
 
 class Ship(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -50,17 +48,19 @@ class Ship(models.Model):
         db_table = 'Ship'
 
 
-class Users(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
-    password = models.CharField(max_length=20, blank=True, null=True)
-    email = models.CharField(max_length=50, blank=True, null=True)
-    phone = models.CharField(max_length=13, blank=True, null=True)
-    ismoderator = models.BooleanField(null=True)
+class CompaundShips(models.Model):
+    id = models.AutoField(primary_key=True)
+    idship = models.ForeignKey(Ship, models.DO_NOTHING, db_column='idship', blank=True, null=True)
+    idcompaund = models.ForeignKey(Compaund, models.DO_NOTHING, db_column='idcompaund', blank=True, null=True)
+    captain = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
-        managed = False
-        db_table = 'Users'
+        db_table = 'Compaund ships'
+        unique_together = (('idship', 'idcompaund'),)
+
+
+
+
 
 
 class AuthGroup(models.Model):

@@ -7,7 +7,7 @@ class CompaundSerializer(serializers.ModelSerializer):
         # Модель, которую мы сериализуем
         model = Compaund
         # Поля, которые мы сериализуем
-        fields = ["id", "name", "admiralname", "country", "victory", "status", "creatorname", "moderatorname", "datacreate", "dataform","dataend", "battledate"]
+        fields = ["id", "name", "admiralname", "country", "victory", "status", "creatorname", "moderatorname", "datacreate", "dataform", "dataend", "battledate"]
 
 class CompaundShipsSerializer(serializers.ModelSerializer):
     class Meta:

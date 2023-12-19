@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 import datetime
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
+from pathlib import Path
 import os
 
 fmt = getattr(settings, 'LOG_FORMAT', None)
@@ -78,34 +79,42 @@ class ShipDetail(APIView):
         src = request.data.get("src", 0)
         name = request.data.get("name", str(id))
         Ship = get_object_or_404(self.model_class, id=id)
+        file = request.FILES['image']
         if src and Ship:
             if str(id)+"/" in [obj.object_name for obj in client.list_objects(bucket_name="images")]:
                 for obj in [obj.object_name for obj in client.list_objects(bucket_name="images", prefix = str(id)+"/")]:
                     client.remove_object(bucket_name="images", object_name=obj)
             val = URLValidator()
-            try:
-                val(src)
-                img = urlopen(src)
-                img1 = urlopen(src)
-                client.put_object(bucket_name='images',  # необходимо указать имя бакета,
-                                  object_name=str(id) + "/" + name + "." + src.split(".")[-1],
-                                  # имя для нового файла в хранилище
-                                  data=img,
-                                  length=len(img1.read())
-                                  )
-            except ValidationError as e:
-                if os.path.exists(src):
-                    client.fput_object(bucket_name='images',
-                                       object_name=str(id) + "/" + name + "." + src.split(".")[-1],
-                                       file_path=src)
-                else:
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
 
+            val(src)
+            img = urlopen(src)
+            img1 = urlopen(src)
+            client.put_object(bucket_name='images',  # необходимо указать имя бакета,
+                              object_name=str(id) + "/" + name + "." + src.split(".")[-1],
+                              # имя для нового файла в хранилище
+                              data=img,
+                              length=len(img1.read())
+                              )
             Ship.image_src = f"http://localhost:9000/images/{id}/{name}.{src.split('.')[-1]}"
+            Ship.save()
+            return Response(status=status.HTTP_201_CREATED)
+        elif file and Ship:
+            if str(id) + "/" in [obj.object_name for obj in client.list_objects(bucket_name="images")]:
+                for obj in [obj.object_name for obj in client.list_objects(bucket_name="images", prefix=str(id) + "/")]:
+                    client.remove_object(bucket_name="images", object_name=obj)
+            client.put_object(bucket_name='images',  # необходимо указать имя бакета,
+                              object_name=str(id) + "/" + name + Path(file.name).suffix,
+                              # имя для нового файла в хранилище
+                              data=file,
+                              length=len(file)
+                              )
+
+            Ship.image_src = f"http://localhost:9000/images/{id}/{name}{Path(file.name).suffix}"
             Ship.save()
             return Response(status=status.HTTP_201_CREATED)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request, id, format=None):
         """
         Обновляет информацию о голосовании (для модератора)
@@ -152,7 +161,7 @@ class CompaundDetail(APIView):
         serializer2 = ShipSerializer(Ships, many=True)
         res = {"Application": serializer1.data, "Ships": serializer2.data}
         for ship in res["Ships"]:
-            ship["captain"] = get_object_or_404(CompaundShips, nameOption=ship["id"], idcompaund=id).captainsofships
+            ship["captain"] = get_object_or_404(CompaundShips, idship=ship["id"], idcompaund=id).captain
         if res["Application"]["creatorname"]:
             res["Application"]["creatorname"] = list(Users.objects.values("id", "name", "email", "phone").filter(id=res["Application"]["creatorname"]))[0]
         if res["Application"]["moderatorname"]:
@@ -194,7 +203,7 @@ class CompaundDetail(APIView):
 @api_view(['Put'])
 def formAppl(request, format=None):
     try:
-        Appl = get_object_or_404(Compaund, creator=get_creator(), status="черновик")
+        Appl = get_object_or_404(Compaund, creatorname=get_creator(), status="черновик")
     except:
         return Response(status=status.HTTP_404_NOT_FOUND)
     Appl.status = "сформирован"
@@ -206,7 +215,7 @@ def formAppl(request, format=None):
 @api_view(['DELETE'])
 def delAppl(request, format=None):
     try:
-        Appl = get_object_or_404(Compaund, creator=get_creator(), status="черновик")
+        Appl = get_object_or_404(Compaund, creatorname=get_creator(), status="черновик")
     except:
         return Response(status=status.HTTP_404_NOT_FOUND)
     Appl.status = "удалён"
@@ -235,15 +244,42 @@ def addToAppl(request, id, format=None):
     captain = request.data.get("captain", 0)
     try:
         Appl = get_object_or_404(Compaund, creatorname=get_creator(), status="черновик")
+        logging.debug(Appl)
     except:
         serializer = CompaundSerializer(data={"creatorname": get_creator()})
+        logging.debug(serializer.is_valid())
         if serializer.is_valid():
+
             serializer.save()
+        logging.debug(serializer.errors)
         Appl = get_object_or_404(Compaund, creatorname=get_creator(), status="черновик")
-    ser = CompaundShipsSerializer(data={"idcompaund":Appl.id, "idship": id, "captainofcompaund": str(captain)})
+        logging.debug(Appl)
+    ser = CompaundShipsSerializer(data={"idcompaund": Appl.id, "idship": id, "captain": captain})
     if ser.is_valid():
         logging.debug(ser.validated_data)
         ser.save()
     else:
-        logging.debug(ser.is_valid())
+        logging.debug(ser.errors)
     return Response(ser.data)
+
+class MM(APIView):
+    def delete(self, request, idAppl, idServ, format=None):
+        try:
+            applserv = get_object_or_404(CompaundShips, idship=idServ, idcompaund=idAppl)
+            applserv.delete()
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def put(self, request, idAppl, idServ, format=None):
+        try:
+            applserv = get_object_or_404(CompaundShips, idship=idServ, idcompaund=idAppl)
+        except:
+           return Response(status=status.HTTP_404_NOT_FOUND)
+        captain = request.data.get("captain", 0)
+        if captain:
+            applserv.captain = captain
+            applserv.save()
+            ser = CompaundShipsSerializer(applserv)
+            return Response(ser.data)
+        Response(status=status.HTTP_400_BAD_REQUEST)
