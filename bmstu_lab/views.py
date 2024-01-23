@@ -45,7 +45,7 @@ class ShipList(APIView):
 
     def get(self, request, format=None):
         try:
-            Appl = get_object_or_404(Compaund, creator=get_creator(), status="черновик").id
+            Appl = get_object_or_404(Compaund, creatorname=get_creator(), status="черновик").id
         except:
             Appl = None
         sear = request.GET.get('text', "")
@@ -238,7 +238,6 @@ def chstatusAppl(request, id, format=None):
         ser = CompaundSerializer(Appl)
         return Response(ser.data)
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
 @api_view(['POST'])
 def addToAppl(request, id, format=None):
     captain = request.data.get("captain", 0)
