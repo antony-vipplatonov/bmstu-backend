@@ -23,4 +23,4 @@ class ShipSerializer(serializers.ModelSerializer):
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ["id", "name", "email", "phone", "password", "ismoderator"]
+        fields = ["id", "username", "email", "phone", "password", "is_staff"]

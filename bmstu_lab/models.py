@@ -2,11 +2,11 @@ from django.db import models
 
 class Users(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
+    username = models.CharField(max_length=50)
     password = models.CharField(max_length=20, blank=True, null=True)
     email = models.CharField(max_length=50, blank=True, null=True)
     phone = models.CharField(max_length=13, blank=True, null=True)
-    ismoderator = models.BooleanField(null=True)
+    is_staff = models.BooleanField(null=True)
 
     class Meta:
         managed = False
