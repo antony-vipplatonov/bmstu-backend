@@ -17,7 +17,7 @@
     <br>
     {% for i in data.shipList %}
         <div class = "card text-center" id = "{{ i.name }}">
-            <img src = "{{ i.image }}" alt = "{{ i.name }}" class="shipsimg">
+            <img src = "{{ i.image_src }}" alt = "{{ i.name }}" class="shipsimg">
             <h2 class="shipsh2">{{ i.name }}</h2>
             <a class="shipsa" href="http://127.0.0.1:8000/seabattles/{{ i.id }}">Перейти на страницу описания корабля</a>
             <form method = "post" enctype="multipart/form-data">

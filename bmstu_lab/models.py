@@ -42,6 +42,7 @@ class Ship(models.Model):
     length = models.FloatField()
     speed = models.FloatField()
     status = models.CharField(max_length=15)
+    image_src=models.TextField()
 
     class Meta:
         managed = False
