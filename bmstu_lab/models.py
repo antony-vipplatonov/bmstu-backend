@@ -1,15 +1,18 @@
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import UserManager, PermissionsMixin
 from django.db import models
 
-class Users(models.Model):
-    id = models.IntegerField(primary_key=True)
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=20, blank=True, null=True)
+class Users(AbstractBaseUser, PermissionsMixin):
+    id = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=50, unique=True)
+    password = models.TextField(blank=True, null=True)
     email = models.CharField(max_length=50, blank=True, null=True)
     phone = models.CharField(max_length=13, blank=True, null=True)
     is_staff = models.BooleanField(null=True)
+    USERNAME_FIELD = 'username'
+    objects = UserManager()
 
     class Meta:
-        managed = False
         db_table = 'Users'
 
 class Compaund(models.Model):
