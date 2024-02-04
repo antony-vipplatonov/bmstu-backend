@@ -13,4 +13,5 @@ urlpatterns = [
     path('applications/<int:id>/chstatus/', views.chstatusAppl),
     path('seabattles/<int:id>/addToAppl/', views.addToAppl),
     path('applications/<int:idAppl>/<int:idServ>/', views.MM.as_view()),
+    path('seabattles/<int:id>/addImg/', views.addImg),
 ]
