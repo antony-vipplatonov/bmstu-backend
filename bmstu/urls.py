@@ -40,4 +40,5 @@ urlpatterns = [
     path('login',  views.login_view, name='login'),
     path('logout', views.logout_view, name='logout'),
     path('user/me', views.userInfo),
+    path('seabattles/<int:id>/addImg/', views.addImg),
 ]

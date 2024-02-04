@@ -145,50 +145,6 @@ class ShipDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @csrf_exempt
-    def post(self, request, id, format=None):
-        user = check_session(request)
-        if user == -1 or user.is_staff == False:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        src = request.data.get("src", 0)
-        name = request.data.get("name", str(id))
-        Ship = get_object_or_404(self.model_class, id=id)
-        file = request.FILES['image']
-        if src and Ship:
-            if str(id)+"/" in [obj.object_name for obj in client.list_objects(bucket_name="images")]:
-                for obj in [obj.object_name for obj in client.list_objects(bucket_name="images", prefix = str(id)+"/")]:
-                    client.remove_object(bucket_name="images", object_name=obj)
-            val = URLValidator()
-
-            val(src)
-            img = urlopen(src)
-            img1 = urlopen(src)
-            client.put_object(bucket_name='images',  # необходимо указать имя бакета,
-                              object_name=str(id) + "/" + name + "." + src.split(".")[-1],
-                              # имя для нового файла в хранилище
-                              data=img,
-                              length=len(img1.read())
-                              )
-            Ship.image_src = f"http://localhost:9000/images/{id}/{name}.{src.split('.')[-1]}"
-            Ship.save()
-            return Response(status=status.HTTP_201_CREATED)
-        elif file and Ship:
-            if str(id) + "/" in [obj.object_name for obj in client.list_objects(bucket_name="images")]:
-                for obj in [obj.object_name for obj in client.list_objects(bucket_name="images", prefix=str(id) + "/")]:
-                    client.remove_object(bucket_name="images", object_name=obj)
-            client.put_object(bucket_name='images',  # необходимо указать имя бакета,
-                              object_name=str(id) + "/" + name + Path(file.name).suffix,
-                              # имя для нового файла в хранилище
-                              data=file,
-                              length=len(file)
-                              )
-
-            Ship.image_src = f"http://localhost:9000/images/{id}/{name}{Path(file.name).suffix}"
-            Ship.save()
-            return Response(status=status.HTTP_201_CREATED)
-
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    @csrf_exempt
     @swagger_auto_schema(request_body=ShipSerializer)
     def put(self, request, id, format=None):
         user = check_session(request)
@@ -311,6 +267,49 @@ class CompaundDetail(APIView):
                 ser = CompaundSerializer(Appl)
             return Response(ser.data)
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+@csrf_exempt
+@api_view(['Put'])
+def addImg(request, id, format=None):
+    src = request.data.get("src", 0)
+    name = request.data.get("name", str(id))
+    ship = get_object_or_404(Ship, id=id)
+    file = request.FILES['image']
+    if src and ship:
+        if str(id)+"/" in [obj.object_name for obj in client.list_objects(bucket_name="images")]:
+            for obj in [obj.object_name for obj in client.list_objects(bucket_name="images", prefix = str(id)+"/")]:
+                client.remove_object(bucket_name="images", object_name=obj)
+        val = URLValidator()
+
+        val(src)
+        img = urlopen(src)
+        img1 = urlopen(src)
+        client.put_object(bucket_name='images',  # необходимо указать имя бакета,
+                          object_name=str(id) + "/" + name + "." + src.split(".")[-1],
+                          # имя для нового файла в хранилище
+                          data=img,
+                          length=len(img1.read())
+                          )
+        ship.image_src = f"http://localhost:9000/images/{id}/{name}.{src.split('.')[-1]}"
+        ship.save()
+        return Response(status=status.HTTP_201_CREATED)
+    elif file and ship:
+        if str(id) + "/" in [obj.object_name for obj in client.list_objects(bucket_name="images")]:
+            for obj in [obj.object_name for obj in client.list_objects(bucket_name="images", prefix=str(id) + "/")]:
+                client.remove_object(bucket_name="images", object_name=obj)
+        client.put_object(bucket_name='images',  # необходимо указать имя бакета,
+                          object_name=str(id) + "/" + name + Path(file.name).suffix,
+                          # имя для нового файла в хранилище
+                          data=file,
+                          length=len(file)
+                          )
+
+        ship.image_src = f"http://localhost:9000/images/{id}/{name}{Path(file.name).suffix}"
+        ship.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
 @csrf_exempt
 @api_view(['Put'])
 def formAppl(request, format=None):
