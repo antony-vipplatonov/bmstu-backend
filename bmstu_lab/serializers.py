@@ -12,7 +12,7 @@ class CompaundSerializer(serializers.ModelSerializer):
 class CompaundShipsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompaundShips
-        fields = ["id", "idship", "idcompaund", "captain"]
+        fields = ["id", "idship", "idcompaund", "captain", "losses"]
 
 class ShipSerializer(serializers.ModelSerializer):
     class Meta:

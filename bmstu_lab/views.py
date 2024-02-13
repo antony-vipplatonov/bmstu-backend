@@ -178,7 +178,9 @@ class CompaundList(APIView):
             else:
                 NOList = self.model_class.objects.filter(dataform__date__gte=dateFrom).filter(dataform__date__lte=dateTo).order_by('dataform')
             serializer = self.serializer_class(NOList, many=True)
-            for i in serializer.data:
+            temp = serializer.data
+            for i in temp:
+                i['UncalcShips'] = len(CompaundShips.objects.filter(idcompaund=i['id']).filter(losses=None))
                 if i["creatorname"]:
                     i["creatorname"] = list(Users.objects.values("id","username","email","phone").filter(id=i["creatorname"]))[0]
                 if i["moderatorname"]:
@@ -189,7 +191,9 @@ class CompaundList(APIView):
             else:
                 NOList = self.model_class.objects.filter(dataform__date__gte=dateFrom).filter(dataform__date__lte=dateTo).filter(creatorname=user.id).order_by('dataform')
             serializer = self.serializer_class(NOList, many=True)
-            for i in serializer.data:
+            temp = serializer.data
+            for i in temp:
+                i['UncalcShips'] = len(CompaundShips.objects.filter(idcompaund=i['id']).filter(losses=None))
                 if i["creatorname"]:
                     i["creatorname"] = list(Users.objects.values("id","username","email","phone").filter(id=i["creatorname"]))[0]["username"]
                 if i["moderatorname"]:
@@ -221,6 +225,7 @@ class CompaundDetail(APIView):
         res = {"Application": serializer1.data, "Ships": serializer2.data}
         for ship in res["Ships"]:
             ship["captain"] = get_object_or_404(CompaundShips, idship=ship["id"], idcompaund=id).captain
+            ship["losses"] = get_object_or_404(CompaundShips, idship=ship["id"], idcompaund=id).losses
         if res["Application"]["creatorname"]:
             res["Application"]["creatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["creatorname"]))[0]
         if res["Application"]["moderatorname"]:
@@ -231,11 +236,12 @@ class CompaundDetail(APIView):
     def put(self, request, id, format=None):
         user = check_session(request)
         if user == -1:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         try:
             Appl = get_object_or_404(Compaund, id=id)
         except:
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
         name = request.data.get("name", 0)
         admiralname = request.data.get("admiralname", 0)
         country = request.data.get("country", 0)
@@ -478,3 +484,18 @@ def userInfo(request):
     if user == -1:
         return Response(status=status.HTTP_403_FORBIDDEN)
     return Response(UsersSerializer(user).data)
+
+@csrf_exempt
+@api_view(['Put'])
+def putQuantityOfLosses(request, format=None):
+    if request.data.get('Key',-1) != 123456:
+        return Response(status=status.HTTP_403_FORBIDDEN)
+    try:
+        Appl = get_object_or_404(Compaund, id=request.data.get('Id',-1))
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    MM = list(CompaundShips.objects.filter(idcompaund=Appl.id).filter(losses=None))
+    for i in range(len(MM)):
+        MM[i].losses = request.data.get("Losses", 0)[i]
+        MM[i].save()
+    return Response({'status': 'Success'})

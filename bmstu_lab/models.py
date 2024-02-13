@@ -56,6 +56,7 @@ class CompaundShips(models.Model):
     idship = models.ForeignKey(Ship, models.DO_NOTHING, db_column='idship', blank=True, null=True)
     idcompaund = models.ForeignKey(Compaund, models.DO_NOTHING, db_column='idcompaund', blank=True, null=True)
     captain = models.CharField(max_length=50, blank=True, null=True)
+    losses = models.IntegerField()
 
     class Meta:
         db_table = 'Compaund ships'
