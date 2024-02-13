@@ -222,11 +222,11 @@ class CompaundDetail(APIView):
         for ship in res["Ships"]:
             ship["captain"] = get_object_or_404(CompaundShips, idship=ship["id"], idcompaund=id).captain
         if res["Application"]["creatorname"]:
-            res["Application"]["creatorname"] = list(Users.objects.values("id", "name", "email", "phone").filter(id=res["Application"]["creatorname"]))[0]
+            res["Application"]["creatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["creatorname"]))[0]
             list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["creatorname"]))[0][
                 "username"]
         if res["Application"]["moderatorname"]:
-            res["Application"]["moderatorname"] = list(Users.objects.values("id", "name", "email", "phone").filter(id=res["Application"]["moderatorname"]))[0]
+            res["Application"]["moderatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["moderatorname"]))[0]
             list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["moderatorname"]))[0][
             "username"]
         return Response(res)
@@ -439,7 +439,7 @@ class UserViewSet(viewsets.ModelViewSet):
 @authentication_classes([])
 @api_view(['Post'])
 def login_view(request):
-    username = request.data.get("username") # допустим передали username и password
+    username = request.data.get("username")
     password = request.data.get("password")
     user = authenticate(request, username=username, password=password)
     if user is not None:
