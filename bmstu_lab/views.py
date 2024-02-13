@@ -223,12 +223,8 @@ class CompaundDetail(APIView):
             ship["captain"] = get_object_or_404(CompaundShips, idship=ship["id"], idcompaund=id).captain
         if res["Application"]["creatorname"]:
             res["Application"]["creatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["creatorname"]))[0]
-            list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["creatorname"]))[0][
-                "username"]
         if res["Application"]["moderatorname"]:
             res["Application"]["moderatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["moderatorname"]))[0]
-            list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["moderatorname"]))[0][
-            "username"]
         return Response(res)
 
     @csrf_exempt
@@ -240,11 +236,17 @@ class CompaundDetail(APIView):
             Appl = get_object_or_404(Compaund, id=id)
         except:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        name = request.data.get("name", 0)
         admiralname = request.data.get("admiralname", 0)
         country = request.data.get("country", 0)
         victory = request.data.get("victory", 0)
         battledate = request.data.get("battledate", 0)
         if  Appl:
+            if name:
+                logging.debug(name)
+                Appl.name = name
+                Appl.save()
+                ser = CompaundSerializer(Appl)
             if admiralname:
                 logging.debug(admiralname)
                 Appl.admiralname = admiralname
