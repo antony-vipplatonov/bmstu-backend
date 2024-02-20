@@ -1,3 +1,6 @@
+#192.168.1.104
+#192.168.43.230
+
 from decimal import Decimal
 import psycopg2
 from django.contrib.auth import authenticate
@@ -30,7 +33,8 @@ from .permission import IsManager
 
 fmt = getattr(settings, 'LOG_FORMAT', None)
 lvl = getattr(settings, 'LOG_LEVEL', logging.DEBUG)
-
+global IP
+IP="192.168.1.104"
 logging.basicConfig(format=fmt, level=lvl)
 logging.debug("Logging started on %s for %s" % (logging.root.name, logging.getLevelName(lvl)))
 
@@ -77,9 +81,9 @@ class ShipList(APIView):
             for i in serializer.data:
                 try:
                     i["image_src"] = i["image_src"].replace("127.0.0.1",
-                                                            "192.168.43.230")  # socket.gethostbyname(socket.gethostname()))
+                                                            IP)
                     i["image_src"] = i["image_src"].replace("localhost",
-                                                            "192.168.43.230")  # socket.gethostbyname(socket.gethostname()))
+                                                            IP)
                 except:
                     pass
             return Response({"ships": serializer.data})
@@ -95,9 +99,9 @@ class ShipList(APIView):
         for i in serializer.data:
             try:
                 i["image_src"] = i["image_src"].replace("127.0.0.1",
-                                                        "192.168.43.230")  # socket.gethostbyname(socket.gethostname()))
+                                                        IP)
                 i["image_src"] = i["image_src"].replace("localhost",
-                                                        "192.168.43.230")  # socket.gethostbyname(socket.gethostname()))
+                                                        IP)
             except:
                 pass
         return Response({"ships":serializer.data, "draftID": Appl})
@@ -123,9 +127,9 @@ class ShipDetail(APIView):
         i = serializer1.data
         try:
             i["image_src"] = i["image_src"].replace("127.0.0.1",
-                                                    "192.168.43.230")  # socket.gethostbyname(socket.gethostname()))
+                                                    IP)
             i["image_src"] = i["image_src"].replace("localhost",
-                                                    "192.168.43.230")  # socket.gethostbyname(socket.gethostname()))
+                                                    IP)
         except:
             pass
         return Response(i)
@@ -182,9 +186,9 @@ class CompaundList(APIView):
             for i in temp:
                 i['UncalcShips'] = len(CompaundShips.objects.filter(idcompaund=i['id']).filter(losses=None))
                 if i["creatorname"]:
-                    i["creatorname"] = list(Users.objects.values("id","username","email","phone").filter(id=i["creatorname"]))[0]
+                    i["creatorname"] = list(Users.objects.values("id","username","email","phone").filter(id=i["creatorname"]))[0]["username"]
                 if i["moderatorname"]:
-                    i["moderatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=i["moderatorname"]))[0]
+                    i["moderatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=i["moderatorname"]))[0]["username"]
         else:
             if stat:
                 NOList = self.model_class.objects.filter(status=stat).filter(dataform__date__gte=dateFrom).filter(dataform__date__lte=dateTo).filter(creatorname=user.id).order_by('dataform')
@@ -227,9 +231,9 @@ class CompaundDetail(APIView):
             ship["captain"] = get_object_or_404(CompaundShips, idship=ship["id"], idcompaund=id).captain
             ship["losses"] = get_object_or_404(CompaundShips, idship=ship["id"], idcompaund=id).losses
         if res["Application"]["creatorname"]:
-            res["Application"]["creatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["creatorname"]))[0]
+            res["Application"]["creatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["creatorname"]))[0]["username"]
         if res["Application"]["moderatorname"]:
-            res["Application"]["moderatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["moderatorname"]))[0]
+            res["Application"]["moderatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["moderatorname"]))[0]["username"]
         return Response(res)
 
     @csrf_exempt
@@ -374,7 +378,7 @@ def addToAppl(request, id, format=None):
     user = check_session(request)
     if user == -1:
         return Response(status=status.HTTP_403_FORBIDDEN)
-    captain = request.data.get("captain", 0)
+    captain = request.data.get("captain", None)
     try:
         Appl = get_object_or_404(Compaund, creatorname=user.id, status="черновик")
         logging.debug(Appl)
@@ -414,7 +418,11 @@ class MM(APIView):
             applserv.save()
             ser = CompaundShipsSerializer(applserv)
             return Response(ser.data)
-        Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            applserv.captain = None
+            applserv.save()
+            ser = CompaundShipsSerializer(applserv)
+            return Response(ser.data)
 
 
 class UserViewSet(viewsets.ModelViewSet):

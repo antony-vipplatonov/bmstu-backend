@@ -20,7 +20,7 @@ class Compaund(models.Model):
     name = models.CharField(max_length=200, blank=True, null=True)
     admiralname = models.CharField(max_length=50, blank=True, null=True)
     country = models.CharField(max_length=50, blank=True, null=True)
-    victory = models.IntegerField(default=0)
+    victory = models.TextField(blank=True, null=True)
     status = models.CharField(default="черновик")
     creatorname = models.ForeignKey(Users, models.DO_NOTHING, db_column='creatorname')
     moderatorname = models.ForeignKey(Users, models.DO_NOTHING, db_column='moderatorname', related_name='compaund_moderatorname_set', null=True)
@@ -56,7 +56,7 @@ class CompaundShips(models.Model):
     idship = models.ForeignKey(Ship, models.DO_NOTHING, db_column='idship', blank=True, null=True)
     idcompaund = models.ForeignKey(Compaund, models.DO_NOTHING, db_column='idcompaund', blank=True, null=True)
     captain = models.CharField(max_length=50, blank=True, null=True)
-    losses = models.IntegerField()
+    losses = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'Compaund ships'
