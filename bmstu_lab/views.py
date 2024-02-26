@@ -112,10 +112,14 @@ class ShipList(APIView):
         user = check_session(request)
         if user == -1 or user.is_staff == False:
             return Response(status=status.HTTP_403_FORBIDDEN)
+        logging.debug(request.data)
         serializer = self.serializer_class(data=request.data)
+        logging.debug(serializer.is_valid())
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            logging.debug(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ShipDetail(APIView):
@@ -142,8 +146,8 @@ class ShipDetail(APIView):
         if str(id) + "/" in [obj.object_name for obj in client.list_objects(bucket_name="images")]:
             for obj in [obj.object_name for obj in client.list_objects(bucket_name="images", prefix=str(id) + "/")]:
                 client.remove_object(bucket_name="images", object_name=obj)
-        logging.debug(1)
         Ship = get_object_or_404(self.model_class, id=id)
+        Ship.image_src = None
         Ship.status = "удалён"
         Ship.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

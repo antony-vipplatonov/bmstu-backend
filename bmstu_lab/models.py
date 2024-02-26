@@ -35,14 +35,14 @@ class Compaund(models.Model):
         db_table = 'Compaund'
 
 class Ship(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=30)
-    weapon = models.TextField()
-    armoring = models.TextField()
-    year = models.IntegerField()
-    displacement = models.FloatField()
-    length = models.FloatField()
-    speed = models.FloatField()
+    weapon = models.TextField(null=True)
+    armoring = models.TextField(null=True)
+    year = models.IntegerField(null=True)
+    displacement = models.FloatField(null=True)
+    length = models.FloatField(null=True)
+    speed = models.FloatField(null=True)
     status = models.CharField(max_length=15, default="действует")
     image_src = models.TextField(blank=True, null=True)
 
