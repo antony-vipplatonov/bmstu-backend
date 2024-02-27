@@ -100,9 +100,9 @@ class CompaundList(APIView):
         serializer = self.serializer_class(NOList, many=True)
         for i in serializer.data:
             if i["creatorname"]:
-                i["creatorname"] = list(Users.objects.values("id","name","email","phone").filter(id=i["creatorname"]))[0]
+                i["creatorname"] = list(Users.objects.values("id","username","email","phone").filter(id=i["creatorname"]))[0]
             if i["moderatorname"]:
-                i["moderatorname"] = list(Users.objects.values("id", "name", "email", "phone").filter(id=i["moderatorname"]))[0]
+                i["moderatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=i["moderatorname"]))[0]
         return Response(serializer.data)
 
 class CompaundDetail(APIView):
@@ -121,9 +121,9 @@ class CompaundDetail(APIView):
         for ship in res["Ships"]:
             ship["captain"] = get_object_or_404(CompaundShips, idship=ship["id"], idcompaund=id).captain
         if res["Application"]["creatorname"]:
-            res["Application"]["creatorname"] = list(Users.objects.values("id", "name", "email", "phone").filter(id=res["Application"]["creatorname"]))[0]
+            res["Application"]["creatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["creatorname"]))[0]
         if res["Application"]["moderatorname"]:
-            res["Application"]["moderatorname"] = list(Users.objects.values("id", "name", "email", "phone").filter(id=res["Application"]["moderatorname"]))[0]
+            res["Application"]["moderatorname"] = list(Users.objects.values("id", "username", "email", "phone").filter(id=res["Application"]["moderatorname"]))[0]
         return Response(res)
     def put(self, request, id, format=None):
         try:
