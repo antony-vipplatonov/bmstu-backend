@@ -222,7 +222,7 @@ class CompaundDetail(APIView):
                 return Response(status=status.HTTP_404_NOT_FOUND)
         else:
             try:
-                Appl = self.model_class.objects.filter(id=id).filter(creator__id=user.id)[0]
+                Appl = self.model_class.objects.filter(id=id).filter(creatorname__id=user.id)[0]
             except IndexError:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
