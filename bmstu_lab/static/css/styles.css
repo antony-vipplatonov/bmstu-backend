@@ -2,7 +2,7 @@ table {
 	border-collapse: collapse;
 	border: 2px solid black;
 }
-td{
+td, th{
 	border: 2px solid black;
 	text-align: center;
 }

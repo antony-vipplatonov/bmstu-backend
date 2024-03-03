@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+    <title>Draft compound</title>
+</head>
+<body class = 'ship'>
+<h class="name">Черновик соединения</h>
+<br>
+<table>
+    <tr>
+        <th>Название корабля</th>
+        <th>Вооружение</th>
+        <th>Бронирование</th>
+        <th>Год ввода в строй</th>
+        <th>Водоизмещение (в тоннах)</th>
+        <th>Длина корпуса (в метрах)</th>
+        <th>Скорость (в узлах)</th>
+    </tr>
+    {% for i in data %}
+    <tr>
+            <td>{{ i.name }}</td>
+            <td>{{ i.weapon }}</td>
+            <td>{{ i.armoring }}</td>
+            <td>{{ i.year }}</td>
+            <td>{{ i.displacement }}</td>
+            <td>{{ i.length }}</td>
+            <td>{{ i.speed}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

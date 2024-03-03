@@ -9,7 +9,7 @@
 <body class = 'ship'>
 <h class="name">{{ data.name }}</h>
 <br>
-<img src = '{{ data.image_src }}' width = 70%>
+<img src = "{% firstof data.image_src 'https://dostavka.phali-hinkali.ru/murino/api2/images/placeholder_1000x.jpg' %}" width = 50%>
 <p>Вооружение корабля: {{data.weapon}}, бронирование: {{data.armoring}}</p>
 <table>
     <tr>

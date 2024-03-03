@@ -11,22 +11,23 @@
 <body class = 'ships'>
 
     <form method="get" enctype="multipart/form-data">
+    {% csrf_token %}
     <input name="text" type="text" class="form-control" placeholder="" class="text" value={{data.src}}>
     <input type="submit" value="Поиск" class="btn btn-primary">
     </form>
     <br>
+    <div class = "card text-center" id = "draft">
+            <img src = "../static/flat-marine-ship-vectors.jpg" alt = "Соединение" class="shipsimg">
+            <h2 class="shipsh2">Соединение из {{data.draftCompaund}} кораблей</h2>
+            <a class="shipsa" href="http://127.0.0.1:8000/seabattles/draftCompaund/">Перейти к черновику соединения</a>
+    </div>
     {% for i in data.shipList %}
         <div class = "card text-center" id = "{{ i.name }}">
-            <img src = "{{ i.image_src }}" alt = "{{ i.name }}" class="shipsimg">
+            <img src = "{% firstof i.image_src 'https://dostavka.phali-hinkali.ru/murino/api2/images/placeholder_1000x.jpg' %}" alt = "{{ i.name }}" class="shipsimg">
             <h2 class="shipsh2">{{ i.name }}</h2>
             <a class="shipsa" href="http://127.0.0.1:8000/seabattles/{{ i.id }}">Перейти на страницу описания корабля</a>
-            <form method = "post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <button type="submit" class = "del" name = 'del' value = {{ i.id }}>
-                        <img src="https://cdn-icons-png.flaticon.com/512/1483/1483063.png" alt="Удалить" height = "20"/>
-                    </button>
-            </form>
         </div>
     {% endfor %}
+
 </body>
 </html>
