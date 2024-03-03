@@ -9,7 +9,6 @@ from .models import *
 conn = ps.connect(dbname="seabattles", host="localhost", user="student", password="pass", port="5432")
 cursor = conn.cursor()
 
-draftItems = [1,2,3]
 
 def shipList(request, sear = ""):
     return render(request, 'shipList.html', {'data': {'shipList': Ship.objects.filter(status = "действует").filter(name__icontains=sear).order_by('year'),
