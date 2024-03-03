@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('seabattles/', views.search),
     path('seabattles/<int:id>/', views.getShip),
+    path('seabattles/draftCompaund/', views.getDraft)
 ]

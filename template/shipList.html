@@ -16,6 +16,11 @@
     <input type="submit" value="Поиск" class="btn btn-primary">
     </form>
     <br>
+    <div class = "card text-center" id = "draft">
+            <img src = "../static/flat-marine-ship-vectors.jpg" alt = "Соединение" class="shipsimg">
+            <h2 class="shipsh2">Соединение из {{data.draft}} кораблей</h2>
+            <a class="shipsa" href="http://127.0.0.1:8000/seabattles/draftCompaund/">Перейти к черновику соединения</a>
+    </div>
     {% for i in data.shipList %}
         <div class = "card text-center" id = "{{ i.name }}">
             <img src = "{{ i.src }}" alt = "{{ i.name }}" class="shipsimg">
@@ -23,5 +28,6 @@
             <a class="shipsa" href="http://127.0.0.1:8000/seabattles/{{ i.id }}">Перейти на страницу описания корабля</a>
         </div>
     {% endfor %}
+
 </body>
 </html>

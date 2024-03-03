@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+    <title>Draft compound</title>
+</head>
+<body class = 'ship'>
+<h class="name">Черновик соединения</h>
+<br>
+<table>
+    {% for i in data %}
+    <tr>
+            <td>{{ i.name }}</td>
+            <td>{{ i.params.0.year }}</td>
+            <td>{{ i.params.0.displacement }}</td>
+            <td>{{ i.params.0.length }}</td>
+            <td>{{ i.params.0.speed}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

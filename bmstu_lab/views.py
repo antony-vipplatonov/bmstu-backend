@@ -22,7 +22,9 @@ allItems = [
              'params': [{'year': 'Год ввода в строй - 1928', 'displacement': 'Водоизмещение 15 933 т', 'length': 'Длина корпуса - 203,76 м', 'speed': 'Скорость хода 35,5 узла'}]},
         ]
 
-def shipList(request, sear = "", items = allItems):
+draftItems = [1,2,3]
+
+def shipList(request, sear = "", items = allItems, draftItems=draftItems):
     selItems = []
     if sear != "":
         for i in items:
@@ -32,7 +34,8 @@ def shipList(request, sear = "", items = allItems):
         selItems = items
     return render(request, 'shipList.html', {'data': {
         'shipList': selItems,
-        'src': sear
+        'src': sear,
+        'draft': len(draftItems)
     }})
 
 def search(request):
@@ -44,3 +47,6 @@ def search(request):
 
 def getShip(request, id, items = allItems):
     return render(request, 'ship.html', {'data':items[id-1]})
+
+def getDraft(request, draftItems=draftItems, items = allItems):
+    return render(request, 'draftCompaund.html', {'data':[i for i in items if (i['id'] in draftItems)]})
